@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>音频播放</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        #status {
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+            margin-top: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #status:hover {
+            background: #444;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h2>音频播放器</h2>
+    <div id="status">
+        <div class="loader"></div>
+        <div>正在加载音频...</div>
+    </div>
+
+    <script>
+        // 替换成你的实际音频URL ↓
+        const audioUrl = 'https://qiniu.bibilili.online/luyindashi/oTU1c49Uv4e-rNEP_8QcxDtwAH78/oTU1c49Uv4e-rNEP_8QcxDtwAH78_c747d9e8-c62b-41b7-9801-e4b3b00ca85c_1741113608101.mp3';
+
+        // 创建音频对象
+        const audio = new Audio(audioUrl);
+        const statusEl = document.getElementById('status');
+
+        // 首次尝试自动播放
+        audio.play()
+            .then(() => {
+                statusEl.style.display = 'none'; // 播放成功隐藏提示
+            })
+            .catch(error => {
+                // 自动播放失败时显示点击提示
+                statusEl.innerHTML = `
+                    <div style="color: #ff9999;">⚠️ 自动播放被阻止</div>
+                    <div style="margin-top:10px;">点击此处开始播放</div>
+                `;
+                
+                // 点击页面任意位置重试播放
+                document.body.addEventListener('click', () => {
+                    audio.play();
+                    statusEl.style.display = 'none';
+                }, { once: true }); // 只监听一次点击
+            });
+
+        // 音频结束事件
+        audio.addEventListener('ended', () => {
+            statusEl.style.display = 'block';
+            statusEl.innerHTML = '播放已完成 🎉';
+        });
+    </script>
+</body>
+</html>
